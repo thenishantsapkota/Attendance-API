@@ -29,7 +29,7 @@ export class ClassService {
             );
           }
         }
-        throw error;
+        throw new InternalServerErrorException(error.meta.cause);
       });
 
     return { message: 'Class created successfully', class: _class };

@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
@@ -28,7 +32,7 @@ export class AuthService {
             throw new ForbiddenException('Credentials are already taken.');
           }
         }
-        throw error;
+        throw new InternalServerErrorException(error.meta.cause);
       });
 
     return await this.signToken(user.id, user.username);
