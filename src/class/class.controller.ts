@@ -18,7 +18,7 @@ import { ClassDto } from './dto';
 export class ClassController {
   constructor(private classService: ClassService) {}
 
-  @Post('/create')
+  @Post('/')
   createClass(@Body() dto: ClassDto) {
     return this.classService.createClass(dto);
   }

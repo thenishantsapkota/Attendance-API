@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -45,15 +46,16 @@ export class ClassService {
       },
     });
 
+    if (!_class) {
+      throw new NotFoundException('No class with that id exists.');
+    }
+
     return { message: 'Class fetched successfully', class: _class };
   }
 
   async getClasses() {
     const classes = await this.prisma.class.findMany({
       orderBy: { id: 'asc' },
-      include: {
-        students: true,
-      },
     });
 
     return { message: 'Classes fetched successfully', classes };

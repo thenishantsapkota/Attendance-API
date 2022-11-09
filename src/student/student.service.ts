@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -43,14 +44,22 @@ export class StudentService {
   }
 
   async getStudent(id: number) {
-    const student = await this.prisma.student.findUnique({
-      where: {
-        id: id,
-      },
-      include: {
-        attendances: true,
-      },
-    });
+    const student = await this.prisma.student
+      .findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          attendances: true,
+        },
+      })
+      .catch((error) => {
+        throw new InternalServerErrorException(error.meta.cause);
+      });
+
+    if (!student) {
+      throw new NotFoundException('No student with that id exists.');
+    }
 
     return { message: 'Student fetched successfully', student };
   }
@@ -58,9 +67,6 @@ export class StudentService {
   async getStudents() {
     const students = await this.prisma.student.findMany({
       orderBy: { id: 'asc' },
-      include: {
-        attendances: true,
-      },
     });
 
     return { message: 'Students fetched successfully', students };
@@ -78,14 +84,21 @@ export class StudentService {
           classId: dto.classId,
           rollNumber: dto.rollNumber,
         },
-        include: {
-          attendances: true,
-        },
       })
       .catch((error) => {
         throw new InternalServerErrorException(error.meta.cause);
       });
 
     return { message: 'Student updated successfully', student };
+  }
+
+  async deleteStudent(id: number) {
+    const student = await this.prisma.student.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return { message: 'Student deleted successfully', student };
   }
 }

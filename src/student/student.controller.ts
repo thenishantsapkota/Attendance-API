@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -17,7 +18,7 @@ import { StudentService } from './student.service';
 export class StudentController {
   constructor(private studentService: StudentService) {}
 
-  @Post('/create')
+  @Post('/')
   createStudent(@Body() dto: StudentDto) {
     return this.studentService.createStudent(dto);
   }
@@ -38,5 +39,10 @@ export class StudentController {
     @Body() dto: StudentDto,
   ) {
     return this.studentService.updateStudent(id, dto);
+  }
+
+  @Delete('/:id')
+  deleteStudent(@Param('id', ParseIntPipe) id: number) {
+    return this.studentService.deleteStudent(id);
   }
 }

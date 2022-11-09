@@ -14,8 +14,7 @@ model User {
   id       Int    @id @default(autoincrement())
   username String @unique
 
-  isSuperuser Boolean @default(false)
-  password    String
+  password String
 }
 
 model Class {
@@ -30,14 +29,14 @@ model Student {
   lastName    String
   rollNumber  String       @unique
   classId     Int
-  class       Class        @relation(fields: [classId], references: [id])
+  class       Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   attendances Attendance[]
 }
 
 model Attendance {
   id        Int      @id @default(autoincrement())
   studentId Int
-  student   Student  @relation(fields: [studentId], references: [id])
-  date      DateTime
-  status    String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  isPresent Boolean  @default(false)
 }
