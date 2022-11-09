@@ -26,7 +26,9 @@ export class StudentService {
           },
         },
         include: {
-          attendances: true,
+          attendances: {
+            orderBy: { id: 'asc' },
+          },
         },
       })
       .catch((error) => {

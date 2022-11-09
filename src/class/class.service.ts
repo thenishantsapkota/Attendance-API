@@ -42,7 +42,12 @@ export class ClassService {
         id: id,
       },
       include: {
-        students: true,
+        students: {
+          orderBy: { id: 'asc' },
+          include: {
+            attendances: true,
+          },
+        },
       },
     });
 
